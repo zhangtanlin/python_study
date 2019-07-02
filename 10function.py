@@ -124,7 +124,7 @@ equation_one_two = solve_equation_one_two(1, 2, 3)
 print('一元二次方程equation_one_two，解为：', equation_one_two)  # 解为： (3.0, -5.0)
 
 # 函数的默认参数
-# 自定义一个计算X平方的函数
+# 自定义一个计算 x 平方的函数
 
 
 def my_power(x):
@@ -146,7 +146,11 @@ my_solve_power_n = solve_power_n(5, 3)
 print('my_solve_power_n 的三次方的值为', my_solve_power_n)
 
 # 在 Python 的函数中，需要设置默认参数是，可以直接给参数设置默认值
-# 注意：这种参数的设置类似给typesecipt函数设置默认值
+# 这种参数的设置类似给 typesecipt 函数设置默认值
+# 注意：必选参数在前，默认参数在后，否则 Python 的解释器会报错；
+# 当函数有多个参数时，把变化大的参数放前面，变化小的参数放后面。变化小的参数就可以作为默认参数。
+
+
 def solve_power_base(x, n=2):
     s = 1
     while n > 0:
@@ -156,4 +160,155 @@ def solve_power_base(x, n=2):
 
 
 my_solve_power_solve_power_base = solve_power_base(5, 4)
-print('my_solve_power_solve_power_base 的4次方的值为', my_solve_power_solve_power_base)
+print('my_solve_power_solve_power_base 的4次方的值为',
+      my_solve_power_solve_power_base)
+
+# 函数中按顺序提供参数和不按顺序提供参数的区别写法
+
+
+def enroll(name, grade, age=6, city='成都'):
+    print('姓名是：', name)
+    print('年级是：', grade)
+    print('年龄是：', age)
+    print('城市是：', city)
+
+
+enroll('张小', '一年级')  # 使用默认参数，添加姓名、班级
+enroll('张小小', '二年级', 10)  # 设置默认参数，添加姓名、班级、年龄
+enroll('张小小小', '三年级', city='广元')  # 不按顺序修改默认参数，添加姓名、班级、城市
+
+# 当参数为 list 时，常见问题
+# 注意：函数在定义时，默认参数 l 的值就被计算出来了，即 []，
+# 因为默认参数 l 也是一个变量，它指向对象 []，
+# 每次调用该函数，如果改变了 l 的内容，则下次调用时，默认参数的内容就变了，不再是函数定义时的 [] 了。
+
+
+def param_list(l=[]):
+    l.append('结束')
+    return l
+
+
+print('param_list 使用默认参数时：', param_list())  # 结果=> ['结束']
+print('param_list 添加参数时：', param_list([1, 2, 3]))  # 结果=> [1, 2, 3, '结束']
+print('param_list 再次使用默认参数时：', param_list())  # 结果=> ['结束', '结束']
+print('param_list 第三次使用默认参数时：', param_list())  # 结果=> ['结束', '结束', '结束']
+
+# 修改上面的 param_list 为正确方式
+# 注意：在下面代码中，为什么设置参数为str、None这样的不变对象呢？
+# 因为不变对象一旦创建，对象内部的数据就不能修改，这样就减少了由于修改数据导致的错误；
+# 此外，由于对象不变，多任务环境下同时读取对象不需要加锁，同时读取这条数据一点问题都没有；
+# 我们在编写程序时，如果可以设计一个不变对象，那就尽量设计成不变对象。
+
+
+def change_param_list(l=None):
+    if l is None:
+        l = []
+    l.append('再次结束')
+    return l
+
+
+print('change_param_list 使用默认参数时：', change_param_list())  # ['再次结束']
+print('change_param_list 添加参数时：', change_param_list([1, 2]))  # [1, 2, '再次结束']
+print('change_param_list 再次使用默认参数时：', change_param_list())  # ['再次结束']
+print('change_param_list 第三次使用默认参数时：', change_param_list())  # ['再次结束']
+
+# 可变参数
+# 可变参数就是传入的参数个数是可变的，可以是 1 个、 2 个到任意个，还可以是 0 个。
+# 注意这种可变参数一般都会涉及到在函数内部循环；
+# variable_list_square_sum 函数只能传入 list ；
+# variable_tuple_square_sum 函数只能传入 tuple 元组；
+# 可变参数允许你传入 0 个或任意个参数，这些可变参数在函数调用时自动组装为一个 tuple ；
+
+
+def variable_list_square_sum(numbers):
+    sum = 0
+    for n in numbers:
+        sum = sum + n * n
+    return sum
+
+
+print('variable_list_square_sum 里面 list 的平方和为：',
+      variable_list_square_sum([1, 2, 3]))
+
+
+def variable_tuple_square_sum(*numbers):
+    sum = 0
+    for n in numbers:
+        sum = sum + n * n
+    return sum
+
+
+print('variable_tuple_square_sum 里面数据的平方和为：',
+      variable_tuple_square_sum(4, 5, 6))
+
+variable_square_sum1 = variable_tuple_square_sum(*(7, 8, 9))
+variable_square_sum2 = variable_tuple_square_sum(*[7, 8, 9])
+
+print('把 list 或者 tuple 作为可变参数计算平方和为：',
+      variable_square_sum1, variable_square_sum2)
+
+# 关键字参数
+# 关键字参数允许你传入 0 个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个 dict 。
+# **age 表示关键字参数（表示一个 dict ）。 age 只做表示，替代，不做展示。
+
+
+def login(name, password, **other):
+    print('name:', name, 'password:', password, 'other_age:', other)
+    return name, password, other
+
+
+any_param = login('张小霖', '123456', city='乐山')
+print('传入任意参数后：', any_param)
+
+# 关键字参数的复杂调用
+dict_param = {'other_name': '蒙娜丽莎', 'age': 18, 'grade': '一班'}
+complex_param = login('张小霖', '123456', **dict_param)
+print('传入复杂参数后：', complex_param)
+
+# 命名关键字参数（限制关键字参数）
+# 作用：限制关键字参数的名字，就可以用命名关键字参数。
+# 用法：和关键字参数**kw不同，命名关键字参数需要一个特殊分隔符*，*后面的参数被视为命名关键字参数。
+# 注意：命名关键字参数必须传入定义的参数名。如果没有传入参数名，调用也将报错（必须传入定义的参数，多传少传都报错）；
+# restrict_param('孙子', 45, '山东北部（齐国乐安）', '军事'))  # 由于没有传入定义的参数名，所以此行调用会报错。
+
+
+def restrict_param(name, age, *, city, job):
+    return name, age, city, job
+
+
+# print('关键字参数为：', restrict_param('孙子', 45, city='山东北部（齐国乐安）')) # 会报错
+# print('关键字参数为：', restrict_param('孙子', 45, city='山东北部（齐国乐安）', job='军事', wife='未知')) # 会报错
+print('restrict_param 命名关键字参数：', restrict_param(
+    '孙子', 45, city='山东北部（齐国乐安）', job='军事'))  # 正确
+
+# 如果函数参数中已经有了一个可变参数，后面跟着的命名关键字参数就不再需要一个特殊分隔符*了；
+# 这个可变参数仅作为后面参数的定义，不作为key值传递
+
+
+def restrict_param_add(name, age, *, city, job):
+    print(name, age, city, job)
+
+
+restrict_param_add('带参数的 *args 含有 city ， job ：', '年龄99', city='四川广元', job='我想成为一个军事家')
+# print('restrict_param_add 中间含有命名关键字参数：', restrict_param_add(
+#     '孙膑', '不详', city='山东省菏泽市甄城县北', job='军事'))
+
+# 参数组合
+# 在 Python 中定义函数，可以用必选参数、默认参数、可变参数、关键字参数和命名关键字参数，
+# 这5种参数都可以组合使用，但是参数定义的顺序必须是：
+# 必选参数、
+# 默认参数、
+# 可变参数、
+# 命名关键字参数和关键字参数。
+
+
+def compose_param1(a, b=0, *c, **d):
+    print('组合参数1：a=', a, 'b=', b, 'c=', c, 'd=', d)
+
+
+def compose_param2(a, b=0, *c, d, e, **f):
+    print('组合参数2：a=', a, 'b=', b, 'c=', c, 'd=', d, 'e=', e, 'f=', f)
+
+
+compose_param1('我是 compose_param1 的，必选参数a', '默认值b', ['可变参数list1','可变参数list2'], param1='关键字参数1', param2='关键字参数2')
+compose_param2('我是 compose_param2 的，必选参数a', '我是默认值b', ['可变参数c_list1','可变参数c_list2'], d='命名关键字参数1', e='命名关键字参数2', f1="关键字f1", f2="关键字f2")
