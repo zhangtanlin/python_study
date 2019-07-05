@@ -289,7 +289,8 @@ def restrict_param_add(name, age, *, city, job):
     print(name, age, city, job)
 
 
-restrict_param_add('带参数的 *args 含有 city ， job ：', '年龄99', city='四川广元', job='我想成为一个军事家')
+restrict_param_add('带参数的 *args 含有 city ， job ：',
+                   '年龄99', city='四川广元', job='我想成为一个军事家')
 # print('restrict_param_add 中间含有命名关键字参数：', restrict_param_add(
 #     '孙膑', '不详', city='山东省菏泽市甄城县北', job='军事'))
 
@@ -310,5 +311,82 @@ def compose_param2(a, b=0, *c, d, e, **f):
     print('组合参数2：a=', a, 'b=', b, 'c=', c, 'd=', d, 'e=', e, 'f=', f)
 
 
-compose_param1('我是 compose_param1 的，必选参数a', '默认值b', ['可变参数list1','可变参数list2'], param1='关键字参数1', param2='关键字参数2')
-compose_param2('我是 compose_param2 的，必选参数a', '我是默认值b', ['可变参数c_list1','可变参数c_list2'], d='命名关键字参数1', e='命名关键字参数2', f1="关键字f1", f2="关键字f2")
+compose_param1('我是 compose_param1 的，必选参数a', '默认值b', [
+               '可变参数list1', '可变参数list2'], param1='关键字参数1', param2='关键字参数2')
+compose_param2('我是 compose_param2 的，必选参数a', '我是默认值b', [
+               '可变参数c_list1', '可变参数c_list2'], d='命名关键字参数1', e='命名关键字参数2', f1="关键字f1", f2="关键字f2")
+
+# 递归函数
+# 函数在内部调用本身，这个函数就是递归函数。
+# 所有的递归函数都可以写成循环的方式，但循环的逻辑不如递归清晰。
+# 优点：逻辑简单清晰。
+# 缺点：是过深的调用会导致栈溢出， Python 标准的解释器没有针对尾递归做优化，任何递归函数都存在栈溢出的问题。
+# 注意：使用递归函数需要注意防止栈溢出。
+# 知识：在计算机中，函数调用是通过栈（ stack ）这种数据结构实现的，
+# 每当进入一个函数调用，栈就会加一层栈帧，每当函数返回，栈就会减一层栈帧；
+# 由于栈的大小不是无限的，所以，递归调用的次数过多，会导致栈溢出。
+# n! = 1 x 2 x 3 x ... x n
+
+
+def recursion(n):
+    if n == 1:
+        return 1
+    return n * recursion(n - 1)
+
+
+print('等差数列（从 5-1 ）的积为：', recursion(5))
+# recursion(5) 的计算过程是：
+# ===> fact(5)
+# ===> 5 * fact(4)
+# ===> 5 * (4 * fact(3))
+# ===> 5 * (4 * (3 * fact(2)))
+# ===> 5 * (4 * (3 * (2 * fact(1))))
+# ===> 5 * (4 * (3 * (2 * 1)))
+# ===> 5 * (4 * (3 * 2))
+# ===> 5 * (4 * 6)
+# ===> 5 * 24
+# ===> 120
+# print('测试栈溢出的情况：', recursion(1000))
+
+# 尾递归函数
+# 解决递归调用栈溢出的方法是通过尾递归优化，
+# 事实上尾递归和循环的效果是一样的，所以，把循环看成是一种特殊的尾递归函数也是可以的。
+# 注意： recursion(n) 函数由于引入了 return n * fact(n - 1) 乘法表达式，所以不是尾递归；
+# 遗憾的是，大多数编程语言没有针对尾递归做优化，Python解释器也没有做优化，所以，即使把上面的 recursion_last(n) 函数改成尾递归方式，也会导致栈溢出。
+
+
+def recursion_last(n):
+    return recursion_last_self(n, 1)
+
+
+def recursion_last_self(num, product):
+    if num == 1:
+        return product
+    print('我爱美女', num - 1, num * product)
+    return recursion_last_self(num - 1, num * product)
+
+
+recursion_last(5)
+# print('尾递归函数 recursion_last(5) 计算结果为：', recursion_last(5))
+# recursion(5) 的计算过程是：
+# ===> fact_iter(5, 1)
+# ===> fact_iter(4, 5)
+# ===> fact_iter(3, 20)
+# ===> fact_iter(2, 60)
+# ===> fact_iter(1, 120)
+# ===> 120
+# print('尾递归函数 recursion_last(1000) 计算结果为：', recursion_last(1000))
+
+# 递归实验汉诺塔的移动
+
+
+def hanoi_tower(n, a, b, c):
+    if n == 1:
+        print('hanoi_tower', a, '-->', c)
+    else:
+        hanoi_tower(n-1, a, c, b)
+        hanoi_tower(1, a, b, c)
+        hanoi_tower(n-1, b, a, c)
+
+
+hanoi_tower(4, 'A', 'B', 'C')
